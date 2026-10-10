@@ -7,6 +7,9 @@ export type Order = {
   totalAmount: number;
   status: OrderStatus;
   chargeId?: string;
+  couponCode?: string;
+  /** In yen. 0 when no coupon is applied */
+  discountAmount: number;
   updatedAt: Date;
 };
 
