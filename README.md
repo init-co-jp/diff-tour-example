@@ -5,6 +5,7 @@ A small example service for trying [diff-tour](https://github.com/init-co-jp/dif
 ```sh
 npm test
 npm start   # POST /orders/:id/checkout
+npm run report:daily [-- YYYY-MM-DD]   # sales for one day (defaults to the previous day)
 ```
 
 ## Branches
@@ -20,5 +21,6 @@ npm start   # POST /orders/:id/checkout
 - `src/payment/` client for the external payment service
 - `src/handlers/` mapping to and from HTTP requests
 - `src/jobs/` scheduled batch jobs
+- `src/reports/` aggregation and reports
 - `src/app.ts` dependency wiring
 - `db/migrations/` database schema (applied in numeric order at startup)
