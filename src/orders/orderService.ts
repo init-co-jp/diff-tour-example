@@ -42,7 +42,7 @@ export class OrderService {
 
     try {
       const { chargeId } = await this.#payments.charge({
-        amount: order.totalAmount,
+        amount: order.totalAmount - order.discountAmount,
         currency: 'JPY',
         customerId: order.customerId,
         idempotencyKey: paymentKeyFor(order),

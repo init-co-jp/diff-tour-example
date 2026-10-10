@@ -1,3 +1,5 @@
+import { CouponService } from './coupons/couponService.ts';
+import { SqliteCouponRepository } from './coupons/sqliteCouponRepository.ts';
 import { openDatabase } from './db.ts';
 import { OrderService } from './orders/orderService.ts';
 import { SqliteOrderRepository } from './orders/sqliteOrderRepository.ts';
@@ -12,5 +14,6 @@ export function createApp(env: NodeJS.ProcessEnv = process.env) {
     timeoutMs: 10_000,
   });
   const orderService = new OrderService(orders, payments);
-  return { db, orders, payments, orderService };
+  const couponService = new CouponService(new SqliteCouponRepository(db), orders);
+  return { db, orders, payments, orderService, couponService };
 }

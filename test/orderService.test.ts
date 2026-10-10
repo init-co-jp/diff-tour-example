@@ -7,7 +7,7 @@ import { ScriptedPaymentGateway } from './fakes.ts';
 
 async function setup(steps: ConstructorParameters<typeof ScriptedPaymentGateway>[0] = []) {
   const orders = new InMemoryOrderRepository();
-  await orders.save({ id: 'o1', customerId: 'c1', totalAmount: 3000, status: 'CART', updatedAt: new Date() });
+  await orders.save({ id: 'o1', customerId: 'c1', totalAmount: 3000, status: 'CART', discountAmount: 0, updatedAt: new Date() });
   const payments = new ScriptedPaymentGateway(steps);
   return { orders, payments, service: new OrderService(orders, payments) };
 }
@@ -18,6 +18,14 @@ test('marks the order PAID when the payment goes through', async () => {
   const order = await orders.get('o1');
   assert.equal(order?.status, 'PAID');
   assert.equal(order?.chargeId, 'ch_1');
+});
+
+test('charges the total minus the discount', async () => {
+  const { orders, payments, service } = await setup();
+  const order = await orders.get('o1');
+  await orders.save({ ...order!, couponCode: 'WELCOME', discountAmount: 500 });
+  await service.checkout('o1');
+  assert.equal(payments.calls[0].amount, 2500);
 });
 
 test('builds the idempotency key from the order ID', async () => {

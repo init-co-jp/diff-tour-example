@@ -9,8 +9,8 @@ const now = new Date('2026-01-01T01:00:00Z');
 
 test('marks orders PAID if a charge exists, PAYMENT_FAILED otherwise', async () => {
   const orders = new InMemoryOrderRepository(() => longAgo);
-  await orders.save({ id: 'charged', customerId: 'c1', totalAmount: 1000, status: 'PENDING_PAYMENT', updatedAt: longAgo });
-  await orders.save({ id: 'not-charged', customerId: 'c1', totalAmount: 1000, status: 'PENDING_PAYMENT', updatedAt: longAgo });
+  await orders.save({ id: 'charged', customerId: 'c1', totalAmount: 1000, status: 'PENDING_PAYMENT', discountAmount: 0, updatedAt: longAgo });
+  await orders.save({ id: 'not-charged', customerId: 'c1', totalAmount: 1000, status: 'PENDING_PAYMENT', discountAmount: 0, updatedAt: longAgo });
   const payments = new ScriptedPaymentGateway();
   payments.charges.set('order-charged', { chargeId: 'ch_9' });
 
@@ -23,7 +23,7 @@ test('marks orders PAID if a charge exists, PAYMENT_FAILED otherwise', async () 
 
 test('leaves orders updated less than 10 minutes ago alone', async () => {
   const orders = new InMemoryOrderRepository(() => now);
-  await orders.save({ id: 'o1', customerId: 'c1', totalAmount: 1000, status: 'PENDING_PAYMENT', updatedAt: now });
+  await orders.save({ id: 'o1', customerId: 'c1', totalAmount: 1000, status: 'PENDING_PAYMENT', discountAmount: 0, updatedAt: now });
   await reconcilePendingPayments(orders, new ScriptedPaymentGateway(), now);
   assert.equal((await orders.get('o1'))?.status, 'PENDING_PAYMENT');
 });
