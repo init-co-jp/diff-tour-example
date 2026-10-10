@@ -21,3 +21,4 @@ npm start   # POST /orders/:id/checkout
 - `src/handlers/` mapping to and from HTTP requests
 - `src/jobs/` scheduled batch jobs
 - `src/app.ts` dependency wiring
+- `db/migrations/` database schema (applied in numeric order at startup)
