@@ -1,0 +1,9 @@
+{
+  "name": "diff-tour-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.ts",
+    "test": "node --test 'test/**/*.test.ts'"
+  }
+}
