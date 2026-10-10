@@ -1,5 +1,4 @@
 import type { PaymentGateway } from '../payment/gateway.ts';
-import { PaymentDeclinedError } from '../payment/gateway.ts';
 import type { Order } from './order.ts';
 import { paymentKeyFor } from './order.ts';
 import type { OrderRepository } from './orderRepository.ts';
@@ -50,12 +49,10 @@ export class OrderService {
       order.status = 'PAID';
       order.chargeId = chargeId;
     } catch (e) {
-      if (e instanceof PaymentDeclinedError) {
-        order.status = 'PAYMENT_FAILED';
-        await this.#orders.save(order);
-      }
-      // On a payment service outage or timeout, we cannot tell here whether the charge went through.
-      // Leave the order PENDING_PAYMENT and let the reconcile batch (jobs/reconcilePendingPayments) decide
+      // The payment gateway has already retried, so treat this as a failure and
+      // let the customer check out again
+      order.status = 'PAYMENT_FAILED';
+      await this.#orders.save(order);
       throw e;
     }
 

@@ -34,10 +34,12 @@ test('marks the order PAYMENT_FAILED when the card is declined, and allows a ret
   assert.equal((await orders.get('o1'))?.status, 'PAID');
 });
 
-test('leaves the order PENDING_PAYMENT on a timeout (the charge may have gone through)', async () => {
+test('marks the order PAYMENT_FAILED on a timeout, and allows a retry', async () => {
   const { orders, service } = await setup([new PaymentTimeoutError()]);
   await assert.rejects(service.checkout('o1'), PaymentTimeoutError);
-  assert.equal((await orders.get('o1'))?.status, 'PENDING_PAYMENT');
+  assert.equal((await orders.get('o1'))?.status, 'PAYMENT_FAILED');
+  await service.checkout('o1');
+  assert.equal((await orders.get('o1'))?.status, 'PAID');
 });
 
 test('rejects checkout of an order whose payment is pending', async () => {

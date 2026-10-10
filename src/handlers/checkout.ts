@@ -23,10 +23,10 @@ export async function handleCheckout(service: OrderService, orderId: string): Pr
     }
     if (e instanceof PaymentUnavailableError || e instanceof PaymentTimeoutError) {
       return {
-        status: 503,
+        status: 502,
         body: {
-          error: 'payment_pending',
-          message: 'We are confirming your payment. Please check your order history in a little while.',
+          error: 'payment_failed',
+          message: 'Payment failed. Please try again in a little while.',
         },
       };
     }
